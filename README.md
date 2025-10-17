@@ -1,9 +1,3 @@
-Excellent idea. Explaining *why* Hot Reload works in this specific setup is crucial for students to understand the power of containerization and networking.
-
-Here is the updated `README.md` with a new, dedicated section explaining Hot Reload and Hot Restart.
-
----
-
 # Flutter Development in a Box: A Dockerized Fedora Environment
 
 Welcome, students! This project provides a complete, ready-to-use development environment for building Flutter applications. Think of it like a perfectly configured computer, packed neatly into a single box (a Docker container), that you can run on any machine.
