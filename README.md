@@ -1,6 +1,6 @@
-Of course. Integrating VS Code is the best way to elevate this setup from a simple build environment to a full-featured Integrated Development Environment (IDE).
+Excellent idea. Explaining *why* Hot Reload works in this specific setup is crucial for students to understand the power of containerization and networking.
 
-Here is the updated `README.md`. It now includes a dedicated section on how to configure and use VS Code with the "Dev Containers" extension for a seamless, professional development workflow.
+Here is the updated `README.md` with a new, dedicated section explaining Hot Reload and Hot Restart.
 
 ---
 
@@ -68,11 +68,14 @@ version: '3.8'
 services:
   flutter-dev:
     image: fcarella/flutter-fedora:latest
-    stdin_open: true
-    tty: true
+    stdin_open: true # Keeps the container running for an interactive session
+    tty: true        # Connects your terminal to the container's terminal
     working_dir: /home/flutteruser/app
+
+    # Mounts your current folder into the container's workspace
     volumes:
       - .:/home/flutteruser/app
+
     # --- Networking: CONFIGURE FOR YOUR OS! ---
     # Option 1: For Linux hosts. (Default)
     network_mode: host
@@ -115,7 +118,7 @@ This file tells VS Code how to connect to and use the Docker container.
     *   Open `docker-compose.yml`.
     *   **If you are on Linux:** You are all set! The file is ready.
     *   **If you are on Windows or macOS:**
-        1.  Add a `#` to the beginning of the `network_mode: host` line.
+        1.  Add a `#` to the beginning of the `network_mode: host` line to disable it.
         2.  Remove the `#` from the two `environment:` lines.
 
 ### Step 4: ▶️ Launch Everything
@@ -150,12 +153,37 @@ Now that you're connected, you have a powerful and seamless IDE experience.
     *   Click the green **Play** button at the top.
     *   VS Code will compile the app and launch it on your emulator.
 
-You now have a full debugging experience:
-*   **Hot Reload:** Save a file to see changes instantly.
-*   **Breakpoints:** Click in the gutter to the left of the line numbers to set breakpoints.
-*   **Variable Inspection:** See the state of your variables when paused at a breakpoint.
+You now have a full debugging experience with breakpoints, variable inspection, and Flutter's most famous feature: Hot Reload.
 
-### 📦 Building a Release APK
+---
+
+## 🔥 Hot Reload: Flutter's Superpower
+
+Yes, this setup **fully supports both Hot Reload and Hot Restart**, giving you the instant feedback loop that makes Flutter development so fast and fun.
+
+*   **Hot Reload (the default):** Injects new code changes into the running app's virtual machine. The app's state is preserved. This is perfect for instantly seeing UI changes.
+*   **Hot Restart:** Destroys the current app state and restarts the application from the beginning. Use this when you've made changes that affect the app's state, like modifying a global variable.
+
+### How does it work in our Docker setup?
+
+It works because of two key connections between your computer (the host) and the Docker container:
+
+1.  **Live File Syncing:** In the `docker-compose.yml` file, the `volumes: - .:/home/flutteruser/app` line creates a shared folder. When you press **Ctrl+S** to save a file in VS Code on your host machine, that file is instantly updated inside the container.
+
+2.  **Live Device Connection:** The `network_mode` or `environment` setting creates a network bridge. The `flutter run` command *inside the container* sees your file change and uses this bridge to send the updated code to the Android emulator running on your host machine.
+
+The result is a seamless experience. You edit code on your machine, but the container does all the work of compiling and reloading it on the emulator.
+
+### How to Use It
+
+*   **Automatic:** Just save a file (**Ctrl+S**) while your app is running in debug mode. You'll see the changes on the emulator in about a second.
+*   **Manual:** In the VS Code terminal where `flutter run` is active, you can press:
+    *   **`r`** to trigger a Hot Reload.
+    *   **`R`** (Shift + r) to trigger a Hot Restart.
+
+---
+
+## 📦 Building a Release APK
 
 When you're ready to share your app, you can build a final, optimized APK file.
 
@@ -167,11 +195,11 @@ When you're ready to share your app, you can build a final, optimized APK file.
     ```
 4.  The final APK will be located on your host machine at: `hello_world/build/app/outputs/flutter-apk/app-release.apk`.
 
-## 🧠 Understanding the Magic (How It Works)
+## 🧠 Understanding the Magic (The Big Picture)
 
 *   **Docker (`fcarella/flutter-fedora:latest`)**: This is the pre-built image from Docker Hub. It's a blueprint that contains Fedora Linux, Flutter, and the Android tools.
 
-*   **Docker Compose (`docker-compose.yml`)**: This is our "easy button" that tells Docker *how* to run the image, setting up the file sharing (`volumes`) and networking.
+*   **Docker Compose (`docker-compose.yml`)**: This is a simple configuration file that tells Docker *how* to run the image. It's our "easy button" that sets up the volume mounting (to sync our files) and the networking (to talk to the emulator).
 
 *   **Dev Containers (`devcontainer.json`)**: This file is the bridge between VS Code and Docker. It tells the "Dev Containers" extension to launch the `flutter-dev` service from our compose file and automatically install the Flutter & Dart extensions *inside the container* for a rich language experience.
 
