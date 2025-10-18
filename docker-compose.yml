@@ -1,0 +1,23 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  flutter-dev:
+    image: fcarella/flutter-fedora:latest
+    stdin_open: true
+    tty: true
+    working_dir: /home/flutteruser/app
+
+    # This line syncs your local folder with the container's workspace
+    volumes:
+      - .:/home/flutteruser/app
+
+    # --- Networking: CONFIGURE FOR YOUR OS! ---
+    # Select the appropriate option for your host OS.
+
+    # Option 1: For Linux hosts.
+    network_mode: host
+
+    # Option 2: For Windows and macOS hosts.
+    # environment:
+    #   - ADB_SERVER_SOCKET=tcp:host.docker.internal:5037
+    
