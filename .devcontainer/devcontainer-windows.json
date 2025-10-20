@@ -1,7 +1,6 @@
 {
   "name": "Flutter Dev Container (Windows)",
   
-  // Point this to your new Windows-specific compose file
   "dockerComposeFile": "../docker-compose-windows.yml",
 
   "service": "flutter-dev",
@@ -16,7 +15,5 @@
     }
   },
 
-  // This command runs after the container is created. It ensures the Flutter
-  // tool knows to use the host.docker.internal address for debugging.
   "postCreateCommand": "flutter config --enable-windows-desktop"
 }
