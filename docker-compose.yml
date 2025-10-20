@@ -1,23 +1,27 @@
-# docker-compose.yml
 version: '3.8'
+
 services:
   flutter-dev:
-    image: fcarella/flutter-fedora:latest
+    # This now builds the image from the Dockerfile in the current directory.
+    # It ensures you are always using your latest local version.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # This is an alias for the built image.
+    image: fcarella/flutter-fedora:local-windows
+
     stdin_open: true
     tty: true
     working_dir: /home/flutteruser/app
 
-    # This line syncs your local folder with the container's workspace
+    # Mounts your current folder into the container's workspace.
     volumes:
       - .:/home/flutteruser/app
 
-    # --- Networking: CONFIGURE FOR YOUR OS! ---
-    # Select the appropriate option for your host OS.
-
-    # Option 1: For Linux hosts.
-    network_mode: host
-
-    # Option 2: For Windows and macOS hosts.
-    # environment:
-    #   - ADB_SERVER_SOCKET=tcp:host.docker.internal:5037
-    
+    # --- Windows Networking Configuration ---
+    # This special value tells Docker to add an entry for 'host.docker.internal'
+    # to the container's hosts file, which resolves to the host's IP address.
+    # This is the standard way to connect back from a container to the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
