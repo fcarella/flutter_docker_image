@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  flutter-dev:
+    # This now builds the image from the Dockerfile in the current directory.
+    # It ensures you are always using your latest local version.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # This is an alias for the built image.
+    image: fcarella/flutter-fedora:local-windows
+
+    stdin_open: true
+    tty: true
+    working_dir: /home/flutteruser/app
+
+    # Mounts your current folder into the container's workspace.
+    volumes:
+      - .:/home/flutteruser/app
+
+    # --- Windows Networking Configuration ---
+    # This special value tells Docker to add an entry for 'host.docker.internal'
+    # to the container's hosts file, which resolves to the host's IP address.
+    # This is the standard way to connect back from a container to the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
